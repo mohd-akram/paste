@@ -17,7 +17,7 @@ necessary.
 
 """
 
-from cStringIO import StringIO
+from io import StringIO
 import re
 import cgi
 from paste.util import threadedprint
@@ -36,7 +36,7 @@ class TeeFile(object):
         self.files = files
 
     def write(self, v):
-        if isinstance(v, unicode):
+        if isinstance(v, str):
             # WSGI is picky in this case
             v = str(v)
         for file in self.files:

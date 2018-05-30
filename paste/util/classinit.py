@@ -5,10 +5,10 @@ class ClassInitMeta(type):
 
     def __new__(meta, class_name, bases, new_attrs):
         cls = type.__new__(meta, class_name, bases, new_attrs)
-        if (new_attrs.has_key('__classinit__')
+        if ('__classinit__' in new_attrs
             and not isinstance(cls.__classinit__, staticmethod)):
             setattr(cls, '__classinit__',
-                    staticmethod(cls.__classinit__.im_func))
+                    staticmethod(cls.__classinit__.__func__))
         if hasattr(cls, '__classinit__'):
             cls.__classinit__(cls, new_attrs)
         return cls
@@ -19,7 +19,7 @@ def build_properties(cls, new_attrs):
     __classinit__), create or modify properties based on functions
     with special names ending in __get, __set, and __del.
     """
-    for name, value in new_attrs.items():
+    for name, value in list(new_attrs.items()):
         if (name.endswith('__get') or name.endswith('__set')
             or name.endswith('__del')):
             base = name[:-5]

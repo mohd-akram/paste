@@ -6,7 +6,7 @@ import difflib
 
 class Mock(object):
     def __init__(self, **kw):
-        for name, value in kw.items():
+        for name, value in list(kw.items()):
             setattr(self, name, value)
 
 class Supplement(Mock):
@@ -110,7 +110,7 @@ def test_hide():
 def print_diff(s1, s2):
     differ = difflib.Differ()
     result = list(differ.compare(s1.splitlines(), s2.splitlines()))
-    print('\n'.join(result))
+    print(('\n'.join(result)))
 
 def test_hide_supppressed():
     """

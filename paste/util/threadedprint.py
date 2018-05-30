@@ -68,8 +68,7 @@ class PrintCatcher(filemixin.FileMixin):
 
     def __init__(self, default=None, factory=None, paramwriter=None,
                  leave_stdout=False):
-        assert len(filter(lambda x: x is not None,
-                          [default, factory, paramwriter])) <= 1, (
+        assert len([x for x in [default, factory, paramwriter] if x is not None]) <= 1, (
             "You can only provide one of default, factory, or paramwriter")
         if leave_stdout:
             assert not default, (
@@ -92,7 +91,7 @@ class PrintCatcher(filemixin.FileMixin):
     def write(self, v, currentThread=threading.currentThread):
         name = currentThread().getName()
         catchers = self._catchers
-        if not catchers.has_key(name):
+        if name not in catchers:
             self._defaultfunc(name, v)
         else:
             catcher = catchers[name]
@@ -140,7 +139,7 @@ class PrintCatcher(filemixin.FileMixin):
                    currentThread=threading.currentThread):
         if name is None:
             name = currentThread().getName()
-        assert self._catchers.has_key(name), (
+        assert name in self._catchers, (
             "There is no PrintCatcher catcher for the thread %r" % name)
         del self._catchers[name]
 
@@ -173,8 +172,7 @@ register = deregister = not_installed_error
 class StdinCatcher(filemixin.FileMixin):
 
     def __init__(self, default=None, factory=None, paramwriter=None):
-        assert len(filter(lambda x: x is not None,
-                          [default, factory, paramwriter])) <= 1, (
+        assert len([x for x in [default, factory, paramwriter] if x is not None]) <= 1, (
             "You can only provide one of default, factory, or paramwriter")
         if default:
             self._defaultfunc = self._readdefault
@@ -192,7 +190,7 @@ class StdinCatcher(filemixin.FileMixin):
     def read(self, size=None, currentThread=threading.currentThread):
         name = currentThread().getName()
         catchers = self._catchers
-        if not catchers.has_key(name):
+        if name not in catchers:
             return self._defaultfunc(name, size)
         else:
             catcher = catchers[name]
@@ -222,7 +220,7 @@ class StdinCatcher(filemixin.FileMixin):
                    currentThread=threading.currentThread):
         if name is None:
             name = currentThread().getName()
-        assert self._catchers.has_key(name), (
+        assert name in self._catchers, (
             "There is no StdinCatcher catcher for the thread %r" % name)
         del self._catchers[name]
 

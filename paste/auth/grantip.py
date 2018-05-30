@@ -29,7 +29,7 @@ class GrantIPMiddleware(object):
     def __init__(self, app, ip_map, clobber_username=True):
         self.app = app
         self.ip_map = []
-        for key, value in ip_map.items():
+        for key, value in list(ip_map.items()):
             self.ip_map.append((ip4.IP4Range(key),
                                 self._convert_user_role(value[0], value[1])))
         self.clobber_username = clobber_username
@@ -62,7 +62,7 @@ class GrantIPMiddleware(object):
     def _set_roles(self, environ, roles):
         cur_roles = environ.get('REMOTE_USER_TOKENS', '').split(',')
         # Get rid of empty roles:
-        cur_roles = list(filter(None, cur_roles))
+        cur_roles = list([_f for _f in cur_roles if _f])
         remove_roles = []
         for role in roles:
             if role.startswith('-'):
@@ -98,7 +98,7 @@ def make_grantip(app, global_conf, clobber_username=False, **kw):
     from paste.deploy.converters import asbool
     clobber_username = asbool(clobber_username)
     ip_map = {}
-    for key, value in kw.items():
+    for key, value in list(kw.items()):
         if ':' in value:
             username, role = value.split(':', 1)
         else:

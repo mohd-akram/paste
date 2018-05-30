@@ -36,15 +36,15 @@ def valid_name(name, encoding=no_encoding, post=False):
 
 def test_wsgirequest_charset():
     # Jose, 'José'
-    app = TestApp(AssertApp(assertfunc=valid_name(u'José', encoding='UTF-8')))
+    app = TestApp(AssertApp(assertfunc=valid_name('José', encoding='UTF-8')))
     res = app.get('/?name=Jos%C3%A9')
 
     # Tanaka, '田中'
-    app = TestApp(AssertApp(assertfunc=valid_name(u'田中', encoding='UTF-8')))
+    app = TestApp(AssertApp(assertfunc=valid_name('田中', encoding='UTF-8')))
     res = app.get('/?name=%E7%94%B0%E4%B8%AD')
 
     # Nippon (Japan), '日本'
-    app = TestApp(AssertApp(assertfunc=valid_name(u'日本', encoding='UTF-8',
+    app = TestApp(AssertApp(assertfunc=valid_name('日本', encoding='UTF-8',
                                                   post=True)))
     res = app.post('/', params=dict(name='日本'))
 
@@ -58,15 +58,15 @@ def test_wsgirequest_charset():
 
     # Encoding specified: expect unicode. Shiftjis is the default encoding, but
     # params become UTF-8 because the browser specified so
-    app = TestApp(AssertApp(assertfunc=valid_name(u'日本', post=True,
+    app = TestApp(AssertApp(assertfunc=valid_name('日本', post=True,
                                                   encoding='shiftjis')))
     res = app.post('/', params=dict(name='日本'),
                    headers={'content-type': content_type % 'UTF-8'})
 
     # Browser did not specify: parse params as the fallback shiftjis
-    app = TestApp(AssertApp(assertfunc=valid_name(u'日本', post=True,
+    app = TestApp(AssertApp(assertfunc=valid_name('日本', post=True,
                                                   encoding='shiftjis')))
-    res = app.post('/', params=dict(name=u'日本'.encode('shiftjis')))
+    res = app.post('/', params=dict(name='日本'.encode('shiftjis')))
 
 def test_wsgirequest_charset_fileupload():
     def handle_fileupload(environ, start_response):
@@ -74,7 +74,7 @@ def test_wsgirequest_charset_fileupload():
         request = WSGIRequest(environ)
 
         assert len(request.POST) == 1
-        assert isinstance(request.POST.keys()[0], str)
+        assert isinstance(list(request.POST.keys())[0], str)
         fs = request.POST['thefile']
         assert isinstance(fs, cgi.FieldStorage)
         assert isinstance(fs.filename, str)
@@ -83,11 +83,11 @@ def test_wsgirequest_charset_fileupload():
 
         request.charset = 'UTF-8'
         assert len(request.POST) == 1
-        assert isinstance(request.POST.keys()[0], str)
+        assert isinstance(list(request.POST.keys())[0], str)
         fs = request.POST['thefile']
         assert isinstance(fs, cgi.FieldStorage)
         assert isinstance(fs.filename, six.text_type)
-        assert fs.filename == u'寿司.txt'
+        assert fs.filename == '寿司.txt'
         assert fs.value == b'Sushi'
 
         request.charset = None
@@ -101,8 +101,8 @@ def test_wsgiresponse_charset():
     response = WSGIResponse(mimetype='text/html; charset=UTF-8')
     assert response.content_type == 'text/html'
     assert response.charset == 'UTF-8'
-    response.write(u'test')
-    response.write(u'test2')
+    response.write('test')
+    response.write('test2')
     response.write('test3')
     status, headers, content = response.wsgi_response()
     for data in content:
@@ -112,8 +112,8 @@ def test_wsgiresponse_charset():
                                             charset='iso-8859-1'))
     try:
         response = WSGIResponse()
-        response.write(u'test')
-        response.write(u'test2')
+        response.write('test')
+        response.write('test2')
         response.write('test3')
         status, headers, content = response.wsgi_response()
         for data in content:
@@ -126,8 +126,8 @@ def test_wsgiresponse_charset():
     WSGIResponse.defaults._push_object(dict(content_type='text/html',
                                             charset=None))
     try:
-        response = WSGIResponse(u'test')
-        response.write(u'test1')
+        response = WSGIResponse('test')
+        response.write('test1')
         status, headers, content = response.wsgi_response()
         for data in content:
             assert isinstance(data, six.text_type)
@@ -137,8 +137,8 @@ def test_wsgiresponse_charset():
     WSGIResponse.defaults._push_object(dict(content_type='text/html',
                                             charset=''))
     try:
-        response = WSGIResponse(u'test')
-        response.write(u'test1')
+        response = WSGIResponse('test')
+        response.write('test1')
         status, headers, content = response.wsgi_response()
         for data in content:
             assert isinstance(data, six.text_type)

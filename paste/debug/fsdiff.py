@@ -42,7 +42,7 @@ class Diff(object):
         self.deleted = {}
         self.updated = {}
         self.created = after.copy()
-        for path, f in before.items():
+        for path, f in list(before.items()):
             if path not in after:
                 self.deleted[path] = f
                 continue
@@ -66,7 +66,7 @@ class Diff(object):
             ('updated', self.updated, True)]:
             if files:
                 s.append('-- %s: -------------------' % name)
-                files = files.items()
+                files = list(files.items())
                 files.sort()
                 last = ''
                 for path, f in files:
@@ -252,7 +252,7 @@ class File(object):
         __tracebackhide__ = True
         bytes = self.bytes
         if s not in bytes:
-            print('Could not find %r in:' % s)
+            print(('Could not find %r in:' % s))
             print(bytes)
             assert s in bytes
 
@@ -326,7 +326,7 @@ def report_expected_diffs(diffs, colorize=False):
     """
     if not diffs:
         return 'No differences'
-    diffs = diffs.items()
+    diffs = list(diffs.items())
     diffs.sort()
     s = []
     last = ''

@@ -66,7 +66,7 @@ class DataApp(object):
         if allowed_methods is not None:
             self.allowed_methods = allowed_methods
         self.headers = headers or []
-        for (k, v) in kwargs.items():
+        for (k, v) in list(kwargs.items()):
             header = get_header(k)
             header.update(self.headers, v)
         ACCEPT_RANGES.update(self.headers, bytes=True)
@@ -247,7 +247,7 @@ class _FileIter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         chunk_size = self.block_size
         if self.size is not None:
             if chunk_size > self.size:

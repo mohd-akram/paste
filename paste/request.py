@@ -25,7 +25,7 @@ try:
     from http.cookies import SimpleCookie, CookieError
 except ImportError:
     # Python 2
-    from Cookie import SimpleCookie, CookieError
+    from http.cookies import SimpleCookie, CookieError
 
 try:
     from UserDict import DictMixin
@@ -198,7 +198,7 @@ def parse_formvars(environ, include_get_vars=True, encoding=None, errors=None):
         environ['CONTENT_LENGTH'] = old_content_length
     formvars = MultiDict()
     if isinstance(fs.value, list):
-        for name in fs.keys():
+        for name in list(fs.keys()):
             values = fs[name]
             if not isinstance(values, list):
                 values = [values]
@@ -345,7 +345,7 @@ def parse_headers(environ):
     yield a sequence of those (header_name, value) tuples.
     """
     # @@: Maybe should parse out comma-separated headers?
-    for cgi_var, value in environ.iteritems():
+    for cgi_var, value in environ.items():
         if cgi_var in _parse_headers_special:
             yield _parse_headers_special[cgi_var], value
         elif cgi_var.startswith('HTTP_'):

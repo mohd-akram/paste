@@ -21,7 +21,7 @@ def simpleapp_withregistry(environ, start_response):
     status = '200 OK'
     response_headers = [('Content-type','text/plain')]
     start_response(status, response_headers)
-    body = 'Hello world!Value is %s\n' % regobj.keys()
+    body = 'Hello world!Value is %s\n' % list(regobj.keys())
     if six.PY3:
         body = body.encode('utf8')
     return [body]
@@ -149,7 +149,7 @@ def test_double_registry():
 def test_really_deep_registry():
     keylist = ['fred', 'wilma', 'barney', 'homer', 'marge', 'bart', 'lisa',
         'maggie']
-    valuelist = range(0, len(keylist))
+    valuelist = list(range(0, len(keylist)))
     obj = {'hi':'people'}
     wsgiapp = RegistryUsingApp(regobj, obj)
     wsgiapp = RegistryManager(wsgiapp)

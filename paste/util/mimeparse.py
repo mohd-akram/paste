@@ -116,7 +116,7 @@ def quality(mime_type, ranges):
     0.7
 
     """
-    parsed_ranges = map(parse_media_range, ranges.split(','))
+    parsed_ranges = list(map(parse_media_range, ranges.split(',')))
     return quality_parsed(mime_type, parsed_ranges)
 
 def best_match(supported, header):

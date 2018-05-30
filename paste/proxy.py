@@ -79,7 +79,7 @@ class Proxy(object):
                 "Unknown scheme for %r: %r" % (self.address, self.scheme))
         conn = ConnClass(self.host)
         headers = {}
-        for key, value in environ.items():
+        for key, value in list(environ.items()):
             if key.startswith('HTTP_'):
                 key = key[5:].lower().replace('_', '-')
                 if key == 'host' or key in self.suppress_http_headers:
@@ -205,7 +205,7 @@ class TransparentProxy(object):
             conn_host = self.force_host
         conn = ConnClass(conn_host)
         headers = {}
-        for key, value in environ.items():
+        for key, value in list(environ.items()):
             if key.startswith('HTTP_'):
                 key = key[5:].lower().replace('_', '-')
                 headers[key] = value
@@ -253,7 +253,7 @@ def parse_headers(message):
     """
     headers_out = []
     if six.PY3:
-        for header, value in message.items():
+        for header, value in list(message.items()):
             if header.lower() not in filtered_headers:
                 headers_out.append((header, value))
     else:

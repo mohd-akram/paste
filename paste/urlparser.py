@@ -127,14 +127,14 @@ class URLParser(object):
         if constructors:
             self.constructors.update(constructors)
         # @@: Should we also check the global options for constructors?
-        for name, value in constructor_conf.items():
+        for name, value in list(constructor_conf.items()):
             if not name.startswith('constructor '):
                 raise ValueError(
                     "Only extra configuration keys allowed are "
                     "'constructor .ext = import_expr'; you gave %r "
                     "(=%r)" % (name, value))
             ext = name[len('constructor '):].strip()
-            if isinstance(value, (str, unicode)):
+            if isinstance(value, str):
                 value = import_string.eval_import(value)
             self.constructors[ext] = value
 

@@ -259,7 +259,7 @@ class IteratorWrapper(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         assert not self.closed, (
             "Iterator read after closed")
         v = six.next(self.iterator)
@@ -307,7 +307,7 @@ def check_environ(environ):
             'so application errors are more likely',
             WSGIWarning)
 
-    for key in environ.keys():
+    for key in list(environ.keys()):
         if '.' in key:
             # Extension, we don't care about its type
             continue

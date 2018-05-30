@@ -272,7 +272,7 @@ def paste_script_template_renderer(content, vars, filename=None):
 class bunch(dict):
 
     def __init__(self, **kw):
-        for name, value in kw.items():
+        for name, value in list(kw.items()):
             setattr(self, name, value)
 
     def __setattr__(self, name, value):
@@ -295,7 +295,7 @@ class bunch(dict):
 
     def __repr__(self):
         items = [
-            (k, v) for k, v in self.items()]
+            (k, v) for k, v in list(self.items())]
         items.sort()
         return '<%s %s>' % (
             self.__class__.__name__,
@@ -319,21 +319,21 @@ def html_quote(value):
         return ''
     if not isinstance(value, six.string_types):
         if six.PY2 and hasattr(value, '__unicode__'):
-            value = unicode(value)
+            value = str(value)
         else:
             value = str(value)
     value = cgi.escape(value, 1)
-    if six.PY2 and isinstance(value, unicode):
+    if six.PY2 and isinstance(value, str):
         value = value.encode('ascii', 'xmlcharrefreplace')
     return value
 
 def url(v):
     if not isinstance(v, six.string_types):
         if six.PY2 and hasattr(v, '__unicode__'):
-            v = unicode(v)
+            v = str(v)
         else:
             v = str(v)
-    if six.PY2 and isinstance(v, unicode):
+    if six.PY2 and isinstance(v, str):
         v = v.encode('utf8')
     return quote(v)
 
@@ -713,7 +713,7 @@ def fill_command(args=None):
     options, args = parser.parse_args(args)
     if len(args) < 1:
         print('You must give a template filename')
-        print(dir(parser))
+        print((dir(parser)))
         assert 0
     template_name = args[0]
     args = args[1:]
@@ -722,7 +722,7 @@ def fill_command(args=None):
         vars.update(os.environ)
     for value in args:
         if '=' not in value:
-            print('Bad argument: %r' % value)
+            print(('Bad argument: %r' % value))
             sys.exit(2)
         name, value = value.split('=', 1)
         if name.startswith('py:'):

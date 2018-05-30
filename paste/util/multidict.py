@@ -26,9 +26,9 @@ class MultiDict(DictMixin):
                 "MultiDict can only be called with one positional argument")
         if args:
             if hasattr(args[0], 'iteritems'):
-                items = args[0].iteritems()
+                items = iter(args[0].items())
             elif hasattr(args[0], 'items'):
-                items = args[0].items()
+                items = list(args[0].items())
             else:
                 items = args[0]
             self._items = list(items)
@@ -165,9 +165,9 @@ class MultiDict(DictMixin):
         if other is None:
             pass
         elif hasattr(other, 'items'):
-            self._items.extend(other.items())
+            self._items.extend(list(other.items()))
         elif hasattr(other, 'keys'):
-            for k in other.keys():
+            for k in list(other.keys()):
                 self._items.append((k, other[k]))
         else:
             for k, v in other:
@@ -365,7 +365,7 @@ class UnicodeMultiDict(DictMixin):
         return (self._decode_key(k), self._decode_value(v))
 
     def __repr__(self):
-        items = ', '.join(['(%r, %r)' % v for v in self.items()])
+        items = ', '.join(['(%r, %r)' % v for v in list(self.items())])
         return '%s([%s])' % (self.__class__.__name__, items)
 
     def __len__(self):
@@ -376,10 +376,10 @@ class UnicodeMultiDict(DictMixin):
     ##
 
     def keys(self):
-        return [self._decode_key(k) for k in self.multi.iterkeys()]
+        return [self._decode_key(k) for k in self.multi.keys()]
 
     def iterkeys(self):
-        for k in self.multi.iterkeys():
+        for k in self.multi.keys():
             yield self._decode_key(k)
 
     __iter__ = iterkeys
@@ -393,10 +393,10 @@ class UnicodeMultiDict(DictMixin):
             yield (self._decode_key(k), self._decode_value(v))
 
     def values(self):
-        return [self._decode_value(v) for v in self.multi.itervalues()]
+        return [self._decode_value(v) for v in self.multi.values()]
 
     def itervalues(self):
-        for v in self.multi.itervalues():
+        for v in self.multi.values():
             yield self._decode_value(v)
 
 __test__ = {

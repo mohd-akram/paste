@@ -39,12 +39,12 @@ def js_repr(v):
              for key, value in v])
     elif isinstance(v, str):
         return repr(v)
-    elif isinstance(v, unicode):
+    elif isinstance(v, str):
         # @@: how do you do Unicode literals in Javascript?
         return repr(v.encode('UTF-8'))
     elif isinstance(v, (float, int)):
         return repr(v)
-    elif isinstance(v, long):
+    elif isinstance(v, int):
         return repr(v).lstrip('L')
     elif hasattr(v, '__js_repr__'):
         return v.__js_repr__()
@@ -106,7 +106,7 @@ class URLResource(object):
         return self._add_positional((item,))
 
     def attr(self, **kw):
-        for key in kw.keys():
+        for key in list(kw.keys()):
             if key.endswith('_'):
                 kw[key[:-1]] = kw[key]
                 del kw[key]
@@ -126,7 +126,7 @@ class URLResource(object):
     def coerce_vars(self, vars):
         global variabledecode
         need_variable_encode = False
-        for key, value in vars.items():
+        for key, value in list(vars.items()):
             if isinstance(value, dict):
                 need_variable_encode = True
             if key.endswith('_'):
@@ -158,7 +158,7 @@ class URLResource(object):
             if name in kw:
                 continue
             new_vars.append((name, values))
-        new_vars.extend(kw.items())
+        new_vars.extend(list(kw.items()))
         return self.__class__(self.url, vars=new_vars,
                               attrs=self.attrs,
                               params=self.original_params)
@@ -168,7 +168,7 @@ class URLResource(object):
         Creates a copy of this URL, but with all the variables set/reset
         (like .setvar(), except clears past variables at the same time)
         """
-        return self.__class__(self.url, vars=kw.items(),
+        return self.__class__(self.url, vars=list(kw.items()),
                               attrs=self.attrs,
                               params=self.original_params)
 
@@ -216,11 +216,11 @@ class URLResource(object):
         if self.attrs:
             base += ' attrs(%s)' % (
                 ' '.join(['%s="%s"' % (html_quote(n), html_quote(v))
-                          for n, v in self.attrs.items()]))
+                          for n, v in list(self.attrs.items())]))
         if self.original_params:
             base += ' params(%s)' % (
                 ', '.join(['%s=%r' % (n, v)
-                           for n, v in self.attrs.items()]))
+                           for n, v in list(self.attrs.items())]))
         return base + '>'
 
     def html__get(self):
@@ -244,7 +244,7 @@ class URLResource(object):
     html = property(html__get)
 
     def _html_attrs(self):
-        return self.attrs.items()
+        return list(self.attrs.items())
 
     def _html_extra(self):
         return ''

@@ -26,7 +26,7 @@ def urlmap_factory(loader, global_conf, **local_conf):
     if not_found_app:
         not_found_app = loader.get_app(not_found_app, global_conf=global_conf)
     urlmap = URLMap(not_found_app=not_found_app)
-    for path, app_name in local_conf.items():
+    for path, app_name in list(local_conf.items()):
         path = parse_path_expression(path)
         app = loader.get_app(app_name, global_conf=global_conf)
         urlmap[path] = app
@@ -241,7 +241,7 @@ class PathProxyURLMap(object):
         self.builder = builder
 
     def __setitem__(self, url, app):
-        if isinstance(app, (str, unicode)):
+        if isinstance(app, str):
             app_fn = os.path.join(self.base_path, app)
             app = self.builder(app_fn)
         url = self.map.normalize_url(url)

@@ -215,13 +215,13 @@ class CatchingIter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         __traceback_supplement__ = (
             Supplement, self.error_middleware, self.environ)
         if self.closed:
             raise StopIteration
         try:
-            return self.app_iterator.next()
+            return next(self.app_iterator)
         except StopIteration:
             self.closed = True
             close_response = self._close()
@@ -289,7 +289,7 @@ class Supplement(object):
                      'wsgi.multithread', 'wsgi.multiprocess',
                      'wsgi.run_once', 'wsgi.version',
                      'wsgi.url_scheme']
-        for name, value in self.environ.items():
+        for name, value in list(self.environ.items()):
             if name.upper() == name:
                 if value:
                     cgi_vars[name] = value

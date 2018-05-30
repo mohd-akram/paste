@@ -47,10 +47,10 @@ try:
     from http.cookies import SimpleCookie
 except ImportError:
     # Python 2
-    from Cookie import SimpleCookie
+    from .Cookie import SimpleCookie
 from paste import request
-from urllib import quote as url_quote
-from urllib import unquote as url_unquote
+from urllib.parse import quote as url_quote
+from urllib.parse import unquote as url_unquote
 
 DEFAULT_DIGEST = hashlib.md5
 
@@ -98,7 +98,7 @@ class AuthTicket(object):
         self.secret = secret
         self.userid = userid
         self.ip = ip
-        if not isinstance(tokens, basestring):
+        if not isinstance(tokens, str):
             tokens = ','.join(tokens)
         self.tokens = tokens
         self.user_data = user_data
@@ -204,7 +204,7 @@ def calculate_digest(ip, timestamp, secret, userid, tokens, user_data,
 
 
 def encode_ip_timestamp(ip, timestamp):
-    ip_chars = ''.join(map(chr, map(int, ip.split('.'))))
+    ip_chars = ''.join(map(chr, list(map(int, ip.split('.')))))
     t = int(timestamp)
     ts = ((t & 0xff000000) >> 24,
           (t & 0xff0000) >> 16,
@@ -215,7 +215,7 @@ def encode_ip_timestamp(ip, timestamp):
 
 
 def maybe_encode(s, encoding='utf8'):
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         s = s.encode(encoding)
     return s
 
@@ -349,7 +349,7 @@ class AuthTKTMiddleware(object):
         return self.app(environ, cookie_setting_start_response)
 
     def set_user_cookie(self, environ, userid, tokens, user_data):
-        if not isinstance(tokens, basestring):
+        if not isinstance(tokens, str):
             tokens = ','.join(tokens)
         if self.include_ip:
             remote_addr = environ['REMOTE_ADDR']

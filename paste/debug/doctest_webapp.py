@@ -16,7 +16,7 @@ import shutil
 import re
 import cgi
 import rfc822
-from cStringIO import StringIO
+from io import StringIO
 from paste.util import PySourceColor
 
 
@@ -85,7 +85,7 @@ def ls(dir=None, recurse=False, indent=0):
         full = os.path.join(dir, fn)
         if os.path.isdir(full):
             fn = fn + '/'
-        print(' '*indent + fn)
+        print((' '*indent + fn))
         if os.path.isdir(full) and recurse:
             ls(dir=full, recurse=True, indent=indent+2)
 
@@ -128,7 +128,7 @@ def show(path_info, example_name):
     stdout = StringIO(stdout)
     headers = rfc822.Message(stdout)
     content = stdout.read()
-    for header, value in headers.items():
+    for header, value in list(headers.items()):
         if header.lower() == 'status' and int(value.split()[0]) == 200:
             continue
         if header.lower() in ('content-type', 'content-length'):
@@ -155,12 +155,12 @@ def show(path_info, example_name):
         expected = f.read()
         f.close()
         if not html_matches(expected, result):
-            print('Pages did not match.  Expected from %s:' % fn)
-            print('-'*60)
+            print(('Pages did not match.  Expected from %s:' % fn))
+            print(('-'*60))
             print(expected)
-            print('='*60)
+            print(('='*60))
             print('Actual output:')
-            print('-'*60)
+            print(('-'*60))
             print(result)
 
 def html_matches(pattern, text):

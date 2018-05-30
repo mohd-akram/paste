@@ -4,7 +4,7 @@
 # you can't import this from another package, when you don't know if
 # that package is installed yet.
 
-from __future__ import print_function
+
 import os
 import sys
 from fnmatch import fnmatchcase

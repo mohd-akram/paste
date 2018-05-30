@@ -287,10 +287,10 @@ class IntSet(object):
         else:
             raise ValueError("Invalid type of function to create.")
         try:
-            f.func_name = name
+            f.__name__ = name
         except TypeError:
             pass
-        f.func_doc = doc
+        f.__doc__ = doc
         return f
 
     # Intersection.
@@ -437,7 +437,7 @@ class IntSet(object):
             rlen += r[1]-r[0]
         return rlen
 
-    def __nonzero__(self):
+    def __bool__(self):
         """Returns true if this integer set contains at least one item."""
 
         return bool(self._ranges)
@@ -458,7 +458,7 @@ class IntSet(object):
             elif r[1] is _MAXINF:
                 ubranges.append([r[0],1])
             else:
-                for val in xrange(r[0],r[1]):
+                for val in range(r[0],r[1]):
                     yield val
         if ubranges:
             while True:
@@ -494,22 +494,22 @@ if __name__ == "__main__":
     y = IntSet((10,20))
     z = IntSet((10,20),30,(15,19),min=0,max=40)
     print(x)
-    print(x&110)
-    print(x|110)
-    print(x^(15,25))
-    print(x-12)
-    print(12 in x)
-    print(x.issubset(x))
-    print(y.issubset(x))
-    print(x.istruesubset(x))
-    print(y.istruesubset(x))
+    print((x&110))
+    print((x|110))
+    print((x^(15,25)))
+    print((x-12))
+    print((12 in x))
+    print((x.issubset(x)))
+    print((y.issubset(x)))
+    print((x.istruesubset(x)))
+    print((y.istruesubset(x)))
     for val in x:
         print(val)
-    print(x.inverse())
-    print(x == z)
-    print(x == y)
-    print(x != y)
-    print(hash(x))
-    print(hash(z))
-    print(len(x))
-    print(x.len())
+    print((x.inverse()))
+    print((x == z))
+    print((x == y))
+    print((x != y))
+    print((hash(x)))
+    print((hash(z)))
+    print((len(x)))
+    print((x.len()))

@@ -664,7 +664,7 @@ def Usage():
       python PySourceColor.py -i- -o c:/pydoc.py.html -s < c:/Python22/my.py
  _____________________________________________________________________________
  """
-    print(doc % (__version__))
+    print((doc % (__version__)))
     sys.exit(1)
 
 ###################################################### Command line interface

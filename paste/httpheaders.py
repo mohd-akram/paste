@@ -144,7 +144,7 @@ try:
 except ImportError:
     # Python 2
     from rfc822 import formatdate, parsedate_tz, mktime_tz
-    from urllib2 import AbstractDigestAuthHandler, parse_keqv_list, parse_http_list
+    from urllib.request import AbstractDigestAuthHandler
 
 from .httpexceptions import HTTPBadRequest
 
@@ -566,7 +566,7 @@ def list_headers(general=None, request=None, response=None, entity=None):
                            (response, 'response'), (entity, 'entity')):
         if bool:
             search.append(strval)
-    return [head for head in _headers.values() if head.category in search]
+    return [head for head in list(_headers.values()) if head.category in search]
 
 def normalize_headers(response_headers, strict=True):
     """
@@ -1105,7 +1105,7 @@ for (name,              category, version, style,      comment) in \
     klass(name, category, comment, version).__doc__ = comment
     del klass
 
-for head in _headers.values():
+for head in list(_headers.values()):
     headname = head.name.replace("-","_").upper()
     locals()[headname] = head
     __all__.append(headname)

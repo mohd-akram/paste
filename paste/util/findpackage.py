@@ -11,7 +11,7 @@ def find_package(dir):
     """
     dir = os.path.abspath(dir)
     orig_dir = dir
-    path = map(os.path.abspath, sys.path)
+    path = list(map(os.path.abspath, sys.path))
     packages = []
     last_dir = None
     while 1:

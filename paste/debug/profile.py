@@ -14,7 +14,7 @@ import threading
 import cgi
 import six
 import time
-from cStringIO import StringIO
+from io import StringIO
 from paste import response
 
 __all__ = ['ProfileMiddleware', 'profile_decorator']
@@ -205,9 +205,9 @@ class DecoratedProfile(object):
         return result
 
     def format_function(self, func, *args, **kw):
-        args = map(repr, args)
+        args = list(map(repr, args))
         args.extend(
-            ['%s=%r' % (k, v) for k, v in kw.items()])
+            ['%s=%r' % (k, v) for k, v in list(kw.items())])
         return '%s(%s)' % (func.__name__, ', '.join(args))
 
 

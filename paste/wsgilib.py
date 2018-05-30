@@ -5,7 +5,7 @@
 A module of many disparate routines.
 """
 
-from __future__ import print_function
+
 
 # functions which moved to paste.request and paste.response
 # Deprecated around 15 Dec 2005
@@ -43,7 +43,7 @@ class add_close(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         return self.__next__()
 
     # Python 3 uses __next__ instead of next
@@ -81,7 +81,7 @@ class add_start_close(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.first:
             self.start_func()
             self.first = False
@@ -117,15 +117,15 @@ class chained_app_iters(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if len(self.chained) == 1:
-            return self.chained[0].next()
+            return next(self.chained[0])
         else:
             try:
-                return self.chained[0].next()
+                return next(self.chained[0])
             except StopIteration:
                 self.chained.pop(0)
-                return self.next()
+                return next(self)
 
     def close(self):
         self._closed = True
@@ -161,7 +161,7 @@ class encode_unicode_app_iter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         content = next(self.app_iter)
         if isinstance(content, six.text_type):
             content = content.encode(self.encoding, self.errors)
@@ -206,9 +206,9 @@ class _wrap_app_iter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         try:
-            return self.app_iter.next()
+            return next(self.app_iter)
         except StopIteration:
             if self.ok_callback:
                 self.ok_callback()
@@ -257,9 +257,9 @@ class _wrap_app_iter_app(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         try:
-            return self.app_iter.next()
+            return next(self.app_iter)
         except StopIteration:
             if self.ok_callback:
                 self.ok_callback()
@@ -276,8 +276,8 @@ class _wrap_app_iter_app(object):
             app_iter = iter(new_app_iterable)
             if hasattr(new_app_iterable, 'close'):
                 self.close = new_app_iterable.close
-            self.next = app_iter.next
-            return self.next()
+            self.next = app_iter.__next__
+            return next(self)
 
 def raw_interactive(application, path='', raise_on_wsgi_error=False,
                     **environ):
@@ -314,7 +314,7 @@ def raw_interactive(application, path='', raise_on_wsgi_error=False,
         basic_environ['PATH_INFO'] = path_info
         if query:
             basic_environ['QUERY_STRING'] = query
-    for name, value in environ.items():
+    for name, value in list(environ.items()):
         name = name.replace('__', '.')
         basic_environ[name] = value
     if ('SERVER_NAME' in basic_environ
@@ -575,8 +575,8 @@ class ResponseHeaderDict(HeaderDict):
         HeaderDict.__init__(self, *args, **kw)
 
 def _warn_deprecated(new_func):
-    new_name = new_func.func_name
-    new_path = new_func.func_globals['__name__'] + '.' + new_name
+    new_name = new_func.__name__
+    new_path = new_func.__globals__['__name__'] + '.' + new_name
     def replacement(*args, **kw):
         warnings.warn(
             "The function wsgilib.%s has been moved to %s"
@@ -584,7 +584,7 @@ def _warn_deprecated(new_func):
             DeprecationWarning, 2)
         return new_func(*args, **kw)
     try:
-        replacement.func_name = new_func.func_name
+        replacement.__name__ = new_func.__name__
     except:
         pass
     return replacement
@@ -595,7 +595,7 @@ def _warn_deprecated(new_func):
 for _name in __all__:
     _func = globals()[_name]
     if (hasattr(_func, 'func_globals')
-        and _func.func_globals['__name__'] != __name__):
+        and _func.__globals__['__name__'] != __name__):
         globals()[_name] = _warn_deprecated(_func)
 
 if __name__ == '__main__':

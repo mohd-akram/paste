@@ -14,7 +14,7 @@ two-phase commit goodness that I don't need.
    This is experimental, and will change in the future.
 """
 from paste.httpexceptions import HTTPException
-from wsgilib import catch_errors
+from .wsgilib import catch_errors
 
 class TransactionManagerMiddleware(object):
 
@@ -116,5 +116,5 @@ if '__main__' == __name__ and False:
     curr = conn.cursor()
     curr.execute("SELECT now(), %s" % conn.quote("B'n\\'gles"))
     (time, bing) = curr.fetchone()
-    print(bing, time)
+    print((bing, time))
 

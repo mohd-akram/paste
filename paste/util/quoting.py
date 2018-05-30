@@ -38,7 +38,7 @@ _unquote_re = re.compile(r'&([a-zA-Z]+);')
 def _entity_subber(match, name2c=html_entities.name2codepoint):
     code = name2c.get(match.group(1))
     if code:
-        return six.unichr(code)
+        return six.chr(code)
     else:
         return match.group(0)
 

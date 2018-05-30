@@ -201,13 +201,13 @@ class HTTPException(Exception):
                 'detail': escfunc(self.detail),
                 'comment': comment_escfunc(self.comment)}
         if HTTPException.template != self.template:
-            for (k, v) in environ.items():
+            for (k, v) in list(environ.items()):
                 args[k] = escfunc(v)
             if self.headers:
                 for (k, v) in self.headers:
                     args[k.lower()] = escfunc(v)
         if six.PY2:
-            for key, value in args.items():
+            for key, value in list(args.items()):
                 if isinstance(value, six.text_type):
                     args[key] = value.encode('utf8', 'xmlcharrefreplace')
         return template % args

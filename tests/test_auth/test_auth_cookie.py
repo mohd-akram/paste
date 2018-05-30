@@ -13,7 +13,7 @@ from paste.httpexceptions import *
 def build(application,setenv, *args, **kwargs):
     def setter(environ, start_response):
         save = environ['paste.auth.cookie'].append
-        for (k,v) in setenv.items():
+        for (k,v) in list(setenv.items()):
             save(k)
             environ[k] = v
         return application(environ, start_response)
@@ -41,6 +41,6 @@ def test_basic(key='key', val='bingles'):
     assert expected in content
 
 def test_roundtrip():
-    roundtrip = str('').join(map(chr, xrange(256)))
+    roundtrip = str('').join(map(chr, range(256)))
     test_basic(roundtrip,roundtrip)
 

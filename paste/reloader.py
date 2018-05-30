@@ -40,7 +40,7 @@ Then every time the reloader polls files it will call
 ``watch_config_files`` and check all the filenames it returns.
 """
 
-from __future__ import print_function
+
 import os
 import sys
 import time
@@ -97,7 +97,7 @@ class Monitor(object):
                 print("Error calling paste.reloader callback %r:" % file_callback,
                       file=sys.stderr)
                 traceback.print_exc()
-        for module in sys.modules.values():
+        for module in list(sys.modules.values()):
             try:
                 filename = module.__file__
             except (AttributeError, ImportError):

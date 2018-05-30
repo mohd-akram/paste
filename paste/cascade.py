@@ -8,7 +8,7 @@ return ``404 Not Found``.
 from paste import httpexceptions
 from paste.util import converters
 import tempfile
-from cStringIO import StringIO
+from io import StringIO
 
 __all__ = ['Cascade']
 
@@ -26,9 +26,9 @@ def make_cascade(loader, global_conf, catch='404', **local_conf):
         ...
         catch = 404 500 ...
     """
-    catch = map(int, converters.aslist(catch))
+    catch = list(map(int, converters.aslist(catch)))
     apps = []
-    for name, value in local_conf.items():
+    for name, value in list(local_conf.items()):
         if not name.startswith('app'):
             raise ValueError(
                 "Bad configuration key %r (=%r); all configuration keys "
